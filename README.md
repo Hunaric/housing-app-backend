@@ -1,0 +1,1 @@
+To authorize any user to edit file inside the project: `sudo chown -R $USER:$USER ~/Documents/Projects/Python`
