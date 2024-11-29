@@ -12,7 +12,7 @@ then
 
 fi
 
-python manage.py makemigrations
-python manage.py migrate
+python manage.py makemigrations || echo "Migrations failed"
+python manage.py migrate || echo "Migration application failed"
 
 exec "$@"

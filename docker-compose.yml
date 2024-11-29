@@ -3,7 +3,7 @@ version: '3.8'
 services:
   web:
     build: ./django-housing
-    command: python manage.py runserver 0.0.0.0:8000
+    command: bash -c "wait-for-it db:5432 -- python manage.py runserver 0.0.0.0:8000"
     volumes: 
       - ./django-housing/:/usr/src/django-housing/
     ports: 
@@ -17,6 +17,7 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data/
     environment:
+      - DJANGO_ALLOWED_HOSTS=localhost 127.0.0.1
       - POSTGRES_USER=postgresuser
       - POSTGRES_PASSWORD=postgrespassword
       - POSTGRES_DB=djangobnb
