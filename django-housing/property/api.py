@@ -14,7 +14,7 @@ from .serializers import PropertiesListSerializer
 @authentication_classes([])
 @permission_classes([])
 def properties_list(request):
-    properties = Property.objects.all()
+    properties = Property.objects.all().order_by('-created_at')
     serializer = PropertiesListSerializer(properties, many=True)
 
     return JsonResponse({
