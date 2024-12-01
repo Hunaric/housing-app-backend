@@ -21,10 +21,27 @@ class Property(models.Model):
     image = models.ImageField(upload_to='uploads/properties')
     landlord = models.ForeignKey(User, related_name='properties', on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
-
+    
     def image_url(self):
         return f'{settings.WEBSITE_URL}{self.image.url}'
 
     class Meta:
         verbose_name = "Property"
         verbose_name_plural = "Properties"
+
+
+
+class PropertyImage(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    property = models.ForeignKey(Property, related_name='additionnal_images', on_delete=models.CASCADE)
+    image = models.ImageField(upload_to='uploads/properties/additionnal_images', null=True, blank=True)
+    created_at = models. DateTimeField(auto_now_add=True)
+
+    def image_url(self):
+        if self.image:
+            return f'{settings.WEBSITE_URL}{self.image.url}'
+        return None
+    
+    class Meta:
+        verbose_name = "Property Image"
+        verbose_name_plural = "Property Images"
