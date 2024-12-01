@@ -53,6 +53,12 @@ class User(AbstractBaseUser, PermissionsMixin):
         return self.email
 
 
+    def avatar_url(self):
+        if self.avatar:
+            return f'{settings.WEBSITE_URL}{self.avatar.url}'
+        else:
+            return ''
+
     class Meta:
         verbose_name = "User"
         verbose_name_plural = "Users"
