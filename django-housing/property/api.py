@@ -3,11 +3,12 @@ from django.http import JsonResponse
 import logging
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
 
 
 from .forms import PropertyForm
 from .models import Property, PropertyImage, Reservation
-from .serializers import PropertiesListSerializer, PropertiesDetailSerializer
+from .serializers import PropertiesListSerializer, PropertiesDetailSerializer, ReservationListSerializer
 
 
 @api_view(['GET'])
@@ -30,8 +31,21 @@ def properties_detail(request, pk):
 
     serializer = PropertiesDetailSerializer(property, many=False)
 
-    return JsonResponse (serializer.data)
+    return JsonResponse(serializer.data)
 
+    
+
+@api_view(['GET'])
+@authentication_classes([])
+@permission_classes([])
+def property_reservations(request, pk):
+    property = Property.objects.get(pk=pk)
+    reservations = property.reservations.all()
+
+    serializer = ReservationListSerializer(reservations, many=True)
+
+    return Response(serializer.data)
+    
     
 @api_view(['POST', 'FILES'])
 def create_property(request):
@@ -70,13 +84,13 @@ def create_property(request):
 
 
 @api_view(['POST'])
-def bok_property(request, pk):
+def book_property(request, pk):
     try: 
+        guests = request.POST.get('guests', '')
         start_date = request.POST.get('start_date', '')
         end_date = request.POST.get('end_date', '')
         number_of_nights = request.POST.get('number_of_nights', '')
         total_price = request.POST.get('total_price', '')
-        guests = request.POST.get('guests', '')
 
         property = Property.objects.get(pk=pk)
 
@@ -89,6 +103,7 @@ def bok_property(request, pk):
             guests=guests,
             created_by=request.user
         )
+        return JsonResponse({'success': True})
     except Exception as e:
         print('Error', e)
 

@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Property, PropertyImage
+from .models import Property, PropertyImage, Reservation
 
 class PropertyImageInline(admin.TabularInline):
     model = PropertyImage
@@ -16,5 +16,12 @@ class PropertyAdmin(admin.ModelAdmin):
 @admin.register(PropertyImage)
 class PropertyImageAdmin(admin.ModelAdmin):
     list_display = ('property', 'image', 'created_at', 'property__title',)
+    search_fields = ('property__title',)
+    list_filter = ('property',)
+
+# Enregistrer le modèle PropertyImage (si vous souhaitez gérer ces images indépendamment)
+@admin.register(Reservation)
+class ReservationPage(admin.ModelAdmin):
+    list_display = ('id', 'property', 'created_by', 'start_date', 'end_date', 'number_of_nights', 'guests', 'total_price',)
     search_fields = ('property__title',)
     list_filter = ('property',)
