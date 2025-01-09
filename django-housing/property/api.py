@@ -2,6 +2,7 @@ from django.http import JsonResponse
 
 import logging
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
+from rest_framework_simplejwt.tokens import AccessToken
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
@@ -9,12 +10,32 @@ from rest_framework.response import Response
 from .forms import PropertyForm
 from .models import Property, PropertyImage, Reservation
 from .serializers import PropertiesListSerializer, PropertiesDetailSerializer, ReservationListSerializer
+from useraccount.models import User
 
 
 @api_view(['GET'])
 @authentication_classes([])
 @permission_classes([])
 def properties_list(request):
+
+    try:
+        authorization_header = request.META.get('HTTP_AUTHORIZATION', '')
+        if not authorization_header:
+            raise ValueError('Authorization header missing')
+        
+        token = authorization_header.split('Bearer ')[1]
+        token = AccessToken(token)
+        user_id = token.payload['user_id']
+        user = User.objects.get(pk=user_id)
+        # print('user:', user)
+    except Exception as e:
+        user = None
+        # print(f'Error: {e}')
+
+
+    print('user,', user)
+    
+    favorites = []
     properties = Property.objects.all().order_by('-created_at')
 
     # Filter
@@ -24,10 +45,15 @@ def properties_list(request):
         properties = properties.filter(landlord_id=landlord_id)
     
     # Not filtered
+    if user:
+        for property in properties:
+            if user in property.favorited.all():
+                favorites.append(property.id)
     serializer = PropertiesListSerializer(properties, many=True)
 
     return JsonResponse({
-        'data': serializer.data
+        'data': serializer.data,
+        'favorites': favorites
     })
 
 
