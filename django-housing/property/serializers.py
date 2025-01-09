@@ -18,7 +18,12 @@ class PropertiesListSerializer(serializers.ModelSerializer):
             'title',
             'price_per_night',
             'image_url',
+            'favorited',
         )
+
+    def get_favorited(self, obj):
+        user = self.context['request'].user
+        return user.is_authenticated and obj.favorited.filter(id=user.id).exists()
 
 
 class PropertiesDetailSerializer(serializers.ModelSerializer):
