@@ -38,11 +38,15 @@ def properties_list(request):
     favorites = []
     properties = Property.objects.all().order_by('-created_at')
 
-    # Filter
+    # Filter for the url
+    is_favorite = request.GET.get('is_favorite', '')
     landlord_id = request.GET.get('landlord_id', '')
 
     if landlord_id:
         properties = properties.filter(landlord_id=landlord_id)
+
+    if is_favorite:
+        properties = properties.filter(favorited__in=[user])
     
     # Not filtered
     if user:
