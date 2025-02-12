@@ -40,6 +40,7 @@ class PropertiesDetailSerializer(serializers.ModelSerializer):
             'bedrooms',
             'bathrooms',
             'guests',
+            'country',
             'landlord',
             'additionnal_images',
         )
