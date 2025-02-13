@@ -26,7 +26,7 @@ WEBSITE_URL = 'http://localhost:8000'
 
 CHANNEL_LAYERS = {
     'default': {
-        'BACKEND': 'channels.layers.InMemoryChannelLayers'
+        'BACKEND': 'channels.layers.InMemoryChannelLayer'
     }
 }
 
