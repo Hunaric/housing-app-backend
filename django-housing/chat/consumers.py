@@ -18,6 +18,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
         )
 
         await self.accept()
+        
 
     async def disconnect(self):
         # Leave room
@@ -37,12 +38,24 @@ class ChatConsumer(AsyncWebsocketConsumer):
         sent_to_id = data['data']['sent_to_id']
         conversation_id = data['data']['conversation_id']
 
+        # Récupérer l'utilisateur connecté
+        user = self.scope.get('user')  
+
+        if user is None or not user.is_authenticated:
+            return  # Ignore si l'utilisateur n'est pas authentifié
+
+
         await self.channel_layer.group_send(
             self.room_group_name,
             {
                 'type': 'chat_message',
                 'body': body,
-                'name': name
+                'created_by': {
+                    'id': str(user.id),
+                    'name': str(user.name) if not callable(user.name) else '',
+                    'email': str(user.email) if not callable(user.email) else '',
+                    'avatar_url': str(user.avatar_url) if hasattr(user, 'avatar_url') and not callable(user.avatar_url) else ''
+                }
             }
         )
 
@@ -51,12 +64,22 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
     # Sending message
     async def chat_message(self, event):
-        body = event['body']
-        name = event['name']
+        body = event.get('body', '')
+        created_by = event.get('created_by', {})
+
+
+        # Vérification des types pour éviter l'erreur
+        if not isinstance(created_by, dict):
+            created_by = {}
 
         await self.send(text_data=json.dumps({
             'body': body,
-            'name': name
+            'created_by': {
+            'id': str(created_by.get('id', '')),  
+            'name': created_by.get('name', ''),  
+            'email': created_by.get('email', ''),  
+            'avatar_url': created_by.get('avatar_url', '')
+            }  
         }))
 
 
