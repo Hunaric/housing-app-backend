@@ -5,6 +5,7 @@ from rest_framework.decorators import api_view
 from .models import Conversation, ConversationMessage
 from .serializers import ConversationListSerializer, ConversationDetailSerializer, ConversationMessageSerializer
 
+from useraccount.models import User
 
 @api_view(['GET'])
 def conversation_list(request):
@@ -34,3 +35,24 @@ def conversation_detail(request, pk):
         'conversation': conversation_serializer.data, 
         'messages': messages_serializer.data
     }, safe=False)
+
+
+@api_view(['GET'])
+def conversation_start(request, user_id):
+    user = request.user
+    try:
+        other_user = User.objects.get(pk=user_id)
+    except User.DoesNotExist:
+        return JsonResponse({'error': 'User not found'}, status=404)
+
+    # Vérifier si la conversation existe déjà
+    conversation = Conversation.objects.filter(users=user).filter(users=other_user).first()
+
+    if conversation:
+        return JsonResponse({'success': True, 'conversation_id': conversation.id})
+
+    # Créer la conversation si elle n'existe pas
+    conversation = Conversation.objects.create()
+    conversation.users.add(user, other_user)
+
+    return JsonResponse({'success': True, 'conversation_id': conversation.id})
