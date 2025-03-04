@@ -42,11 +42,55 @@ def properties_list(request):
     is_favorite = request.GET.get('is_favorite', '')
     landlord_id = request.GET.get('landlord_id', '')
 
+    country = request.GET.get('country', '')
+    category = request.GET.get('category', '')
+    checkin_date = request.GET.get('checkIn', '')
+    checkout_date = request.GET.get('checkOut', '')
+    bedrooms = request.GET.get('numBedrooms', '')
+    guests = request.GET.get('numGuests', '')
+    bathrooms = request.GET.get('numBathrooms', '')
+
+    if checkin_date and checkout_date:
+        exact_matches = Reservation.objects.filter(start_date=checkin_date) | Reservation.objects.filter(end_date=checkout_date)
+        overlap_matches = Reservation.objects.filter(start_date__lte=checkout_date, end_date__gte=checkin_date)
+        all_matches = []
+
+        for reservation in exact_matches | overlap_matches:
+            all_matches.append(reservation.property_id)
+
+        properties = properties.exclude(id__in=all_matches)
+
     if landlord_id:
         properties = properties.filter(landlord_id=landlord_id)
 
     if is_favorite:
         properties = properties.filter(favorited__in=[user])
+
+    if guests:
+        properties = properties.filter(guests__gte=guests)
+
+    if bedrooms:
+        properties = properties.filter(bedrooms__gte=bedrooms)
+
+    if bathrooms:
+        properties = properties.filter(bathrooms__gte=bathrooms)
+
+    if category and category != 'undefined':
+        properties = properties.filter(category=category)
+
+    # Extraire le département et la commune du paramètre country
+    if country:
+        parts = country.split('/')
+        if len(parts) > 0:
+            departement = parts[0]
+            commune = parts[1] if len(parts) > 1 else None
+            
+            # Filtrer par country en utilisant le format "Departement/Commune"
+            properties = properties.filter(country__startswith=departement)  # Filtrer par département
+            if commune:
+                properties = properties.filter(country__icontains=commune)  # Filtrer par commune
+
+
     
     # Not filtered
     if user:
