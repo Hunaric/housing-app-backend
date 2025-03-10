@@ -1,4 +1,4 @@
-# version: '3.8'
+version: '3.8'
 
 services:
   web:
@@ -12,15 +12,23 @@ services:
       - ./.env.dev
     depends_on:
       - db
+    networks:
+      - housing_network
+
   db: 
     image: postgres:15
     volumes:
       - postgres_data:/var/lib/postgresql/data/
     environment:
-      - DJANGO_ALLOWED_HOSTS=localhost 127.0.0.1
       - POSTGRES_USER=postgresuser
       - POSTGRES_PASSWORD=postgrespassword
       - POSTGRES_DB=djangobnb
+    networks:
+      - housing_network
 
 volumes:
   postgres_data:
+
+networks:
+  housing_network:
+    driver: bridge

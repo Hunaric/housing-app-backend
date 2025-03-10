@@ -102,6 +102,8 @@ INSTALLED_APPS = [
     'chat',
     'useraccount',
     'property',
+
+    'drf-yasg',
 ]
 
 MIDDLEWARE = [
