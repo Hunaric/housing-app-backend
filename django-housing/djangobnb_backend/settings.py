@@ -103,7 +103,7 @@ INSTALLED_APPS = [
     'useraccount',
     'property',
 
-    'drf-yasg',
+    # 'drf-yasg',
 ]
 
 MIDDLEWARE = [
