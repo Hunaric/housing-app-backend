@@ -47,5 +47,8 @@ RUN sed -i 's/\r$//g' /usr/src/django-housing/entrypoint.sh && chmod +x /usr/src
 # Copier le reste de l'application
 COPY . .
 
+# Expose le port 8000 pour l'application Django
+EXPOSE 8000
+
 # Configuration de l'entrée
 ENTRYPOINT [ "/usr/src/django-housing/entrypoint.sh" ]
