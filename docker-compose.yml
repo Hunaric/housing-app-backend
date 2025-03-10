@@ -3,7 +3,7 @@ version: '3.8'
 services:
   web:
     build: ./django-housing
-    command: bash -c "wait-for-it db:5432 -- python manage.py runserver 0.0.0.0:8000"
+    command: bash -c "pip install -r /usr/src/django-housing/requirements.txt && wait-for-it db:5432 -- python manage.py runserver 0.0.0.0:8000"
     volumes: 
       - ./django-housing/:/usr/src/django-housing/
     ports: 
