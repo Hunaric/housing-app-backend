@@ -22,7 +22,7 @@ AUTH_USER_MODEL='useraccount.User'
 
 SITE_ID = 1
 
-WEBSITE_URL = 'https://housing-app-349h.vercel.app/'
+WEBSITE_URL = 'https://housing-app-349h.vercel.app'
 
 CHANNEL_LAYERS = {
     'default': {
