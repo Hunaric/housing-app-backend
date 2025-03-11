@@ -38,7 +38,7 @@ class PropertyImage(models.Model):
     created_at = models. DateTimeField(auto_now_add=True)
 
     def image_url(self):
-        if self.image:
+        if self.image:  
             return f'{settings.WEBSITE_URL}{self.image.url}'
         return None
     
