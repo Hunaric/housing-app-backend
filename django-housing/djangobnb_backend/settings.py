@@ -65,6 +65,7 @@ CORS_ALLOWED_ORIGINS = [
     'http://127.0.0.1:4200',
     'http://localhost:4200',
     'https://housing-app-349h.vercel.app',
+    'https://housing-app-backend.onrender.com',
 ]
 
 # CORS_ALLOWED_ALL_ORIGINS = True
@@ -196,3 +197,7 @@ MEDIA_ROOT = BASE_DIR / 'media'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+CSRF_COOKIE_SECURE = True  # Ensures the CSRF cookie is only sent over HTTPS
+CSRF_COOKIE_HTTPONLY = True  # Helps protect against cross-site scripting attacks
